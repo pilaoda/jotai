@@ -103,7 +103,6 @@ const createContinuablePromise = <T>(
 type Options = Parameters<typeof useStore>[0] & {
   delay?: number
   unstable_promiseStatus?: boolean
-  allowTearing?: boolean
 }
 
 export function useAtomValue<Value>(
@@ -117,11 +116,8 @@ export function useAtomValue<AtomType extends Atom<unknown>>(
 ): Awaited<ExtractAtomValue<AtomType>>
 
 export function useAtomValue<Value>(atom: Atom<Value>, options?: Options) {
-  const {
-    delay,
-    unstable_promiseStatus: promiseStatus = !React.use,
-    allowTearing = false,
-  } = options || {}
+  const { delay, unstable_promiseStatus: promiseStatus = !React.use } =
+    options || {}
   const store = useStore(options)
 
   const [[valueFromReducer, storeFromReducer, atomFromReducer], rerender] =
@@ -170,11 +166,11 @@ export function useAtomValue<Value>(atom: Atom<Value>, options?: Options) {
       }
       rerender()
     })
-    if (!allowTearing || !Object.is(valueRef.current, store.get(atom))) {
+    if (!Object.is(valueRef.current, store.get(atom))) {
       rerender()
     }
     return unsub
-  }, [store, atom, delay, promiseStatus, allowTearing])
+  }, [store, atom, delay, promiseStatus])
 
   useDebugValue(value)
   if (isPromiseLike(value)) {

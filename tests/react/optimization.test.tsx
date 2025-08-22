@@ -277,7 +277,7 @@ it('no double renders on initial mount with allowTearing option', async () => {
   let viewCount = 0
 
   const Counter1 = () => {
-    const [count, setCount] = useAtom(count1Atom, { allowTearing: true })
+    const [count, setCount] = useAtom(count1Atom)
     ++viewCount
     return (
       <>
